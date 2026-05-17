@@ -212,6 +212,8 @@ EOF
 # ─────────────────────────────────────────────────
 echo ""
 echo "[7/7] Smoke test — hitting Ollama directly..."
+echo "  Flushing page cache so Ollama sees available memory correctly..."
+echo 3 > /proc/sys/vm/drop_caches
 echo "  (First inference loads the model into RAM — polling until ready...)"
 pct exec $CTID -- bash -c '
     MAX_ATTEMPTS=24
