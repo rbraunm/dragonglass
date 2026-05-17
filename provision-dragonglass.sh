@@ -19,7 +19,7 @@ set -euo pipefail
 
 CTID=200
 HOSTNAME="dragonglass"
-TEMPLATE="debian-12-standard_12.7-1_amd64.tar.zst"
+TEMPLATE="debian-12-standard_12.12-1_amd64.tar.zst"
 
 echo "============================================="
 echo "  Provisioning dragonglass (CT $CTID)"
