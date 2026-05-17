@@ -1,0 +1,21 @@
+================================================================
+STREAM BENCHMARK - CORRECTED THREAD COUNT
+================================================================
+Host:      labradorite
+Date:      Sun May 17 2026
+Config:    2x E5-2699 v4, 320GB DDR4-2400, 8 channels, 16 DIMMs
+Threads:   OMP_NUM_THREADS=48 (matching old CPU thread count for fair comparison)
+Array:     STREAM_ARRAY_SIZE=80000000, NTIMES=20
+
+NOTE: The default benchmark script uses OMP_NUM_THREADS=nproc (88 threads
+on this system), which causes severe thread contention and reports ~8 GB/s.
+With 48 threads the true memory bandwidth is revealed at ~87 GB/s.
+
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:           83945.1     0.015904     0.015248     0.017213
+Scale:          77911.3     0.017987     0.016429     0.032700
+Add:            86995.3     0.023461     0.022070     0.026981
+Triad:          87213.8     0.023103     0.022015     0.025566
+
+Theoretical peak: 8 channels × 2400 MT/s × 8 bytes = 153.6 GB/s
+Measured efficiency: 87.2 / 153.6 = 56.8%
