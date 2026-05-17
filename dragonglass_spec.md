@@ -731,3 +731,13 @@ These are not required. The spec above is the complete, zero-cost solution.
 - [ ] Add PC as second Ollama backend in Open WebUI admin settings
 - [ ] Test GPU inference speed vs CPU baseline
 - [ ] Dual-backend workflow: GPU when PC is on, CPU fallback when off
+
+**Phase 6 — Dedicated Server GPU (if Phase 5 proves value)**
+- [ ] Acquire Tesla V100-PCIE-32GB (~$300-500 used)
+- [ ] Install in labradorite R730 PCIe x16 slot
+- [ ] Enable IOMMU in BIOS for GPU passthrough
+- [ ] Configure Proxmox PCI passthrough to dragonglass LXC
+- [ ] Install NVIDIA drivers + CUDA inside container
+- [ ] IPMI fan control script to override Dell thermal panic
+- [ ] Benchmark: target 40-60 tok/s on 14B models
+- [ ] Retire 2080 Ti offload — server GPU is always-on, no PC dependency
