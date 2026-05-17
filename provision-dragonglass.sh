@@ -212,19 +212,25 @@ EOF
 # ─────────────────────────────────────────────────
 echo ""
 echo "[7/7] Smoke test — hitting Ollama directly..."
-echo "  (First inference loads the model into RAM — this may take 30-60s on CPU...)"
+echo "  (First inference loads the model into RAM — polling until ready...)"
 pct exec $CTID -- bash -c '
-    RESPONSE=$(curl -s --max-time 120 http://localhost:11434/api/generate \
-        -d "{\"model\":\"qwen2.5-coder:7b\",\"prompt\":\"Say hello in one sentence.\",\"stream\":false}")
-    if [ -z "$RESPONSE" ]; then
-        echo "  Smoke test timed out (model may still be loading). Try manually:"
-        echo "    pct exec 200 -- curl -s http://localhost:11434/api/generate -d '"'"'{\"model\":\"qwen2.5-coder:7b\",\"prompt\":\"hello\",\"stream\":false}'"'"'"
-    else
-        REPLY=$(echo "$RESPONSE" | jq -r ".response" 2>/dev/null | head -3)
-        TOK=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d[\"eval_count\"] / (d[\"eval_duration\"]/1e9):.1f} tok/s\")" 2>/dev/null || echo "N/A")
-        echo "  Model says: $REPLY"
-        echo "  Speed: $TOK"
-    fi
+    MAX_ATTEMPTS=24
+    for i in $(seq 1 $MAX_ATTEMPTS); do
+        RESPONSE=$(curl -s --max-time 10 http://localhost:11434/api/generate \
+            -d "{\"model\":\"qwen2.5-coder:7b\",\"prompt\":\"Say hello in one sentence.\",\"stream\":false}" 2>/dev/null)
+        if echo "$RESPONSE" | jq -e ".response" >/dev/null 2>&1; then
+            REPLY=$(echo "$RESPONSE" | jq -r ".response" | head -3)
+            TOK=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d[\"eval_count\"] / (d[\"eval_duration\"]/1e9):.1f} tok/s\")" 2>/dev/null || echo "N/A")
+            echo "  Model says: $REPLY"
+            echo "  Speed: $TOK"
+            exit 0
+        fi
+        echo "  Attempt $i/$MAX_ATTEMPTS — model loading..."
+        sleep 5
+    done
+    echo "  Smoke test failed after $MAX_ATTEMPTS attempts. Debug with:"
+    echo "    pct exec 200 -- systemctl status ollama"
+    echo "    pct exec 200 -- ollama list"
 '
 
 # ─────────────────────────────────────────────────
