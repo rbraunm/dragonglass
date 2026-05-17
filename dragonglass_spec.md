@@ -733,11 +733,38 @@ These are not required. The spec above is the complete, zero-cost solution.
 - [ ] Dual-backend workflow: GPU when PC is on, CPU fallback when off
 
 **Phase 6 — Dedicated Server GPU (if Phase 5 proves value)**
-- [ ] Acquire Tesla V100-PCIE-32GB (~$300-500 used)
-- [ ] Install in labradorite R730 PCIe x16 slot
+
+*Goal: always-on GPU inference fast enough for agentic coding (tool use, inline edits, multi-step reasoning) — not just chat. Target model: 32B-class (e.g. Qwen2.5-Coder:32B) with reliable tool-call support.*
+
+GPU options (pick based on budget and Phase 5 learnings):
+
+| Card | VRAM | Bus | 14B tok/s | 32B Q4 tok/s | Street Price | Notes |
+|------|------|-----|-----------|--------------|--------------|-------|
+| Tesla V100-PCIE-32GB | 32GB HBM2 | PCIe | 40-60 | 15-25 | $300-500 | Passive, server-native, cheapest path to 32GB |
+| RTX 3090 | 24GB GDDR6X | PCIe | 50-80 | 10-15 (tight) | $600-800 | Active cooling, needs airflow planning in R730 |
+| RTX 4090 | 24GB GDDR6X | PCIe | 80-120 | 15-25 (tight) | $1200-1500 | Fastest single-GPU option, 450W TDP, may need PSU upgrade |
+| RTX A6000 | 48GB GDDR6 | PCIe | 50-70 | 25-35 | $1500-2500 | 48GB fits 70B Q4, passive, built for servers |
+
+*32B Q4 is ~18-20GB — fits comfortably in 32GB+ cards, tight on 24GB (leaves no room for context). 24GB cards top out at 14B comfortably or 32B with aggressive quantization.*
+
+Hardware install:
+- [ ] Select and acquire GPU based on budget/performance target
+- [ ] Install in labradorite R730 PCIe x16 slot (riser 3 confirmed, PCIe power confirmed)
 - [ ] Enable IOMMU in BIOS for GPU passthrough
 - [ ] Configure Proxmox PCI passthrough to dragonglass LXC
 - [ ] Install NVIDIA drivers + CUDA inside container
-- [ ] IPMI fan control script to override Dell thermal panic
-- [ ] Benchmark: target 40-60 tok/s on 14B models
-- [ ] Retire 2080 Ti offload — server GPU is always-on, no PC dependency
+- [ ] IPMI fan control script to override Dell thermal panic (non-Dell GPU = 100% fans)
+- [ ] Benchmark: tok/s on 14B and 32B models vs CPU baseline
+
+Agentic coding eval:
+- [ ] Install Aider in dragonglass (`pip install aider-chat`)
+- [ ] Configure Aider to use local Ollama backend
+- [ ] Pull Qwen2.5-Coder:32B (or best available 32B coder at the time)
+- [ ] Test suite: give Aider a small repo and run these tasks, score pass/fail
+  - [ ] "Add input validation to function X" — expects targeted inline edit, not full-file regen
+  - [ ] "Write tests for module Y" — expects new file creation
+  - [ ] "Find and fix the bug in Z" — expects read → diagnose → patch cycle
+  - [ ] "Refactor class A to use composition instead of inheritance" — multi-file coordinated edits
+- [ ] Compare tool-call success rate: 14B vs 32B vs 2080 Ti offload (Phase 5 baseline)
+- [ ] If 32B agentic eval passes >80% of tasks: retire 2080 Ti offload, server GPU is primary
+- [ ] If not: evaluate whether a larger model (70B Q4 on 48GB card) or a different agentic framework improves results
