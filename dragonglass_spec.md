@@ -634,31 +634,33 @@ These are not required. The spec above is the complete, zero-cost solution.
 
 ## Quick-Start Checklist
 
-**Phase 0 — Hardware**
+**Phase 0 — Setup + Baseline**
 - [ ] Order 2x E5-2699 v4 (SR2JS) + thermal paste
-- [ ] Copy benchmark.sh to both nodes
-- [ ] **Run benchmark.sh on labradorite (BEFORE baseline)**
-- [ ] **Run benchmark.sh on larvikite (BEFORE baseline)**
-- [ ] Shut down labradorite, migrate VMs if needed
-- [ ] Swap CPUs, apply thermal paste
-- [ ] Redistribute memory: 4x 32GB from larvikite → labradorite white slots
-- [ ] Populate labradorite per optimized 2 DPC layout (see 0.2)
-- [ ] Backfill larvikite with freed 16GB sticks
-- [ ] Boot, verify CPUs and DDR4-2400 speed in BIOS/dmidecode
-- [ ] Restore VMs
-- [ ] **Run benchmark.sh on labradorite (AFTER)**
-- [ ] **Run benchmark.sh on larvikite (AFTER)**
-- [ ] Compare STREAM Triad results — confirm bandwidth improvement
-
-**Phase 1 — Local LLM (dragonglass)**
 - [ ] Create LXC container `dragonglass` (ID 200) on labradorite
 - [ ] Install Docker in the LXC
 - [ ] Install Ollama, bind to 0.0.0.0
 - [ ] Pull qwen2.5-coder:14b, deepseek-r1:14b, qwen2.5-coder:7b
-- [ ] Benchmark tok/s — run benchmark.sh --with-ollama inside dragonglass
 - [ ] Deploy Open WebUI via docker-compose
 - [ ] Access from Windows browser at http://dragonglass:3000, create admin account
 - [ ] Test local model chat through Open WebUI
+- [ ] Copy benchmark.sh to both nodes + inside dragonglass
+- [ ] **Run benchmark.sh on labradorite (BEFORE baseline)**
+- [ ] **Run benchmark.sh on larvikite (BEFORE baseline)**
+- [ ] **Run benchmark.sh --with-ollama inside dragonglass (BEFORE baseline)**
+
+**Phase 1 — Hardware Upgrade**
+- [ ] Migrate VMs off labradorite → larvikite (both nodes up)
+- [ ] Shut down both nodes
+- [ ] Swap CPUs in labradorite, apply thermal paste
+- [ ] Pull 4x 32GB from larvikite → labradorite white slots
+- [ ] Populate labradorite per optimized 2 DPC layout (see 0.2)
+- [ ] Backfill larvikite with freed 16GB sticks
+- [ ] Boot both, verify CPUs and DDR4-2400 speed in BIOS/dmidecode
+- [ ] Restore/migrate VMs back
+- [ ] **Run benchmark.sh on labradorite (AFTER)**
+- [ ] **Run benchmark.sh on larvikite (AFTER)**
+- [ ] **Run benchmark.sh --with-ollama inside dragonglass (AFTER)**
+- [ ] Compare STREAM Triad and tok/s results — confirm improvement
 
 **Phase 2 — Image Generation (ComfyUI)**
 - [ ] Set up WSL2 + NVIDIA Container Toolkit on Windows
@@ -671,3 +673,8 @@ These are not required. The spec above is the complete, zero-cost solution.
 - [ ] Cancel ChatGPT subscription
 - [ ] Downgrade Claude to Pro ($20/mo)
 - [ ] Run for 1 month, evaluate whether local speed is sufficient
+
+**Phase 4 — Backups**
+- [ ] Design backup strategy for dragonglass (Open WebUI data, custom modelfiles, workflows)
+- [ ] Implement and test backup schedule
+- [ ] Verify restore process
