@@ -128,27 +128,64 @@ Green slots (9-12) stay empty for 2 DPC. Larger DIMMs go in white slots.
 | Ch2 | A3✓ A7✓ A11✓ | 3 | B3✓ B7✓ B11✓ | 3 |
 | Ch3 | A4✓ A8✓ A12✓ | 3 | B4✓ B8✓ B12✓ | 3 |
 
-**Optimized labradorite config (AFTER — 4x 32GB + 12x 16GB = 320GB @ 2400):**
+**Labradorite AFTER — 4x 32GB + 12x 16GB = 320GB @ 2400 MT/s, 2 DPC:**
 
-| Slot | Size | Slot | Size |
-|------|------|------|------|
-| A1 (white) | **32GB** | B1 (white) | **32GB** |
-| A2 (white) | **32GB** | B2 (white) | **32GB** |
-| A3 (white) | 16GB | B3 (white) | 16GB |
-| A4 (white) | 16GB | B4 (white) | 16GB |
-| A5 (black) | 16GB | B5 (black) | 16GB |
-| A6 (black) | 16GB | B6 (black) | 16GB |
-| A7 (black) | 16GB | B7 (black) | 16GB |
-| A8 (black) | 16GB | B8 (black) | 16GB |
-| A9 (green) | — | B9 (green) | — |
-| A10 (green) | — | B10 (green) | — |
-| A11 (green) | — | B11 (green) | — |
-| A12 (green) | — | B12 (green) | — |
+| Slot | Size | Notes |
+|------|------|-------|
+| A1 (white) | **32GB** | CPU1 Ch0, slot 1 |
+| A2 (white) | **32GB** | CPU1 Ch1, slot 1 |
+| A3 (white) | 16GB | CPU1 Ch2, slot 1 |
+| A4 (white) | 16GB | CPU1 Ch3, slot 1 |
+| A5 (black) | 16GB | CPU1 Ch0, slot 2 |
+| A6 (black) | 16GB | CPU1 Ch1, slot 2 |
+| A7 (black) | 16GB | CPU1 Ch2, slot 2 |
+| A8 (black) | 16GB | CPU1 Ch3, slot 2 |
+| A9 (green) | — | CPU1 Ch0, slot 3 — **empty for 2 DPC** |
+| A10 (green) | — | CPU1 Ch1, slot 3 — **empty for 2 DPC** |
+| A11 (green) | — | CPU1 Ch2, slot 3 — **empty for 2 DPC** |
+| A12 (green) | — | CPU1 Ch3, slot 3 — **empty for 2 DPC** |
+| B1 (white) | **32GB** | CPU2 Ch0, slot 1 |
+| B2 (white) | **32GB** | CPU2 Ch1, slot 1 |
+| B3 (white) | 16GB | CPU2 Ch2, slot 1 |
+| B4 (white) | 16GB | CPU2 Ch3, slot 1 |
+| B5 (black) | 16GB | CPU2 Ch0, slot 2 |
+| B6 (black) | 16GB | CPU2 Ch1, slot 2 |
+| B7 (black) | 16GB | CPU2 Ch2, slot 2 |
+| B8 (black) | 16GB | CPU2 Ch3, slot 2 |
+| B9 (green) | — | CPU2 Ch0, slot 3 — **empty for 2 DPC** |
+| B10 (green) | — | CPU2 Ch1, slot 3 — **empty for 2 DPC** |
+| B11 (green) | — | CPU2 Ch2, slot 3 — **empty for 2 DPC** |
+| B12 (green) | — | CPU2 Ch3, slot 3 — **empty for 2 DPC** |
 
-**Larvikite gets the freed 16GB sticks** — populate per R530 channel
-guidelines. Current 128GB stays the same or increases slightly.
+**Larvikite gets the freed 16GB sticks** — 8 of 9 sticks used, 9th is a spare.
+Same 128GB capacity, same 2133 MT/s (E5-2690 v3 max), but all 8 channels
+active instead of 4 — roughly doubles memory parallelism.
 
-**Effective bandwidth improvement:**
+**R530 Channel Mapping:**
+
+| | Channel 0 | Channel 1 | Channel 2 | Channel 3 |
+|--|-----------|-----------|-----------|-----------|
+| CPU1 | A1, A5 | A2, A6 | A3, A7 | A4, A8 |
+| CPU2 | B1 | B2 | B3 | B4 |
+
+**Larvikite AFTER — 8x 16GB = 128GB @ 2133 MT/s, 1 DPC:**
+
+| Slot | Size | Notes |
+|------|------|-------|
+| A1 (white) | 16GB | CPU1 Ch0 |
+| A2 (white) | 16GB | CPU1 Ch1 |
+| A3 (white) | 16GB | CPU1 Ch2 |
+| A4 (white) | 16GB | CPU1 Ch3 |
+| A5 (black) | — | |
+| A6 (black) | — | |
+| A7 (black) | — | |
+| A8 (black) | — | |
+| B1 (white) | 16GB | CPU2 Ch0 |
+| B2 (white) | 16GB | CPU2 Ch1 |
+| B3 (white) | 16GB | CPU2 Ch2 |
+| B4 (white) | 16GB | CPU2 Ch3 |
+
+**Effective bandwidth improvement (labradorite):**
 - Fixed dead channel on CPU1 (was 0 DPC, now 2 DPC)
 - All channels from 1866 → 2400 MT/s
 - Combined improvement: **~35-40% bandwidth gain**
