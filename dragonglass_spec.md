@@ -636,7 +636,7 @@ These are not required. The spec above is the complete, zero-cost solution.
 
 **Phase 0 — Setup + Baseline**
 - [ ] Order 2x E5-2699 v4 (SR2JS) + thermal paste
-- [ ] Run `inventory.sh` on cluster — confirm host/VM mapping (see operations repo)
+- [ ] Run `operations/proxmox/inventory.sh` on cluster — confirm host/VM mapping
 - [ ] Create LXC container `dragonglass` (ID 200) on labradorite
 - [ ] Install Docker in the LXC
 - [ ] Install Ollama, bind to 0.0.0.0
