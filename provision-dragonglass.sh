@@ -216,19 +216,20 @@ echo "  Flushing page cache so Ollama sees available memory correctly..."
 echo 3 > /proc/sys/vm/drop_caches
 echo "  (First inference loads the model into RAM — polling until ready...)"
 pct exec $CTID -- bash -c '
-    MAX_ATTEMPTS=24
+    MAX_ATTEMPTS=12
     for i in $(seq 1 $MAX_ATTEMPTS); do
-        RESPONSE=$(curl -s --max-time 10 http://localhost:11434/api/generate \
+        RESPONSE=$(curl -s --max-time 120 http://localhost:11434/api/generate \
             -d "{\"model\":\"qwen2.5-coder:7b\",\"prompt\":\"Say hello in one sentence.\",\"stream\":false}" 2>/dev/null)
-        if echo "$RESPONSE" | jq -e ".response" >/dev/null 2>&1; then
-            REPLY=$(echo "$RESPONSE" | jq -r ".response" | head -3)
-            TOK=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d[\"eval_count\"] / (d[\"eval_duration\"]/1e9):.1f} tok/s\")" 2>/dev/null || echo "N/A")
+        DONE=$(echo "$RESPONSE" | jq -r ".done // empty" 2>/dev/null)
+        if [ "$DONE" = "true" ]; then
+            REPLY=$(echo "$RESPONSE" | jq -r ".response")
+            TOK=$(echo "$RESPONSE" | jq -r "if .eval_duration > 0 then \"\(.eval_count / (.eval_duration / 1e9) * 10 | round / 10) tok/s\" else \"N/A\" end" 2>/dev/null)
             echo "  Model says: $REPLY"
             echo "  Speed: $TOK"
             exit 0
         fi
         echo "  Attempt $i/$MAX_ATTEMPTS — model loading..."
-        sleep 5
+        sleep 10
     done
     echo "  Smoke test failed after $MAX_ATTEMPTS attempts. Debug with:"
     echo "    pct exec 200 -- systemctl status ollama"
