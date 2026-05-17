@@ -636,6 +636,7 @@ These are not required. The spec above is the complete, zero-cost solution.
 
 **Phase 0 — Setup + Baseline**
 - [ ] Order 2x E5-2699 v4 (SR2JS) + thermal paste
+- [ ] Run `inventory.sh` on cluster — confirm host/VM mapping (see operations repo)
 - [ ] Create LXC container `dragonglass` (ID 200) on labradorite
 - [ ] Install Docker in the LXC
 - [ ] Install Ollama, bind to 0.0.0.0
@@ -644,19 +645,26 @@ These are not required. The spec above is the complete, zero-cost solution.
 - [ ] Access from Windows browser at http://dragonglass:3000, create admin account
 - [ ] Test local model chat through Open WebUI
 - [ ] Copy benchmark.sh to both nodes + inside dragonglass
-- [ ] **Run benchmark.sh on labradorite (BEFORE baseline)**
+- [ ] **Benchmark A — VMs running (normal daily state):**
+  - [ ] `benchmark.sh --host labradorite-vms-on` on labradorite
+  - [ ] `benchmark.sh --with-ollama --host dragonglass-vms-on` inside dragonglass
+- [ ] **Benchmark B — VMs stopped (isolated):**
+  - [ ] Stop all non-dragonglass VMs/CTs on labradorite
+  - [ ] `benchmark.sh --host labradorite-vms-off` on labradorite
+  - [ ] `benchmark.sh --with-ollama --host dragonglass-vms-off` inside dragonglass
+  - [ ] Restart VMs
+- [ ] **Compare A vs B** — if tok/s difference is negligible, VMs can stay; if significant, plan migration
 - [ ] **Run benchmark.sh on larvikite (BEFORE baseline)**
-- [ ] **Run benchmark.sh --with-ollama inside dragonglass (BEFORE baseline)**
 
 **Phase 1 — Hardware Upgrade**
-- [ ] Migrate VMs off labradorite → larvikite (both nodes up)
-- [ ] Shut down both nodes
+- [ ] Shut down labradorite (migrate VMs first only if Phase 0 showed they matter)
+- [ ] Shut down larvikite
 - [ ] Swap CPUs in labradorite, apply thermal paste
 - [ ] Pull 4x 32GB from larvikite → labradorite white slots
 - [ ] Populate labradorite per optimized 2 DPC layout (see 0.2)
 - [ ] Backfill larvikite with freed 16GB sticks
 - [ ] Boot both, verify CPUs and DDR4-2400 speed in BIOS/dmidecode
-- [ ] Restore/migrate VMs back
+- [ ] Restore VMs if migrated
 - [ ] **Run benchmark.sh on labradorite (AFTER)**
 - [ ] **Run benchmark.sh on larvikite (AFTER)**
 - [ ] **Run benchmark.sh --with-ollama inside dragonglass (AFTER)**
