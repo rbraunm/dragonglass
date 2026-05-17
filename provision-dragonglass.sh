@@ -109,7 +109,7 @@ pct exec $CTID -- bash -c '
 
     apt-get update -qq
     apt-get upgrade -y -qq
-    apt-get install -y -qq curl wget git sudo ca-certificates gnupg lsb-release gcc numactl python3 jq zstd
+    apt-get install -y -qq curl wget git sudo ca-certificates gnupg lsb-release gcc numactl python3 jq zstd avahi-daemon
     curl -fsSL https://get.docker.com | sh
     systemctl enable docker
     systemctl start docker
@@ -245,7 +245,7 @@ echo "  dragonglass provisioning complete!"
 echo "============================================="
 echo ""
 echo "  Next steps:"
-echo "  1. Open http://dragonglass:3000 in your browser"
+echo "  1. Open http://dragonglass.local:3000 in your browser"
 echo "     (or use the container IP — check with: pct exec $CTID -- hostname -I)"
 echo "  2. Create your admin account"
 echo "  3. Test a chat with qwen2.5-coder:14b"
