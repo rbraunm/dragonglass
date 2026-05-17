@@ -81,6 +81,22 @@ else
 fi
 
 # ─────────────────────────────────────────────────
+# Step 2b: AppArmor — allow Docker to run in unprivileged LXC
+# ─────────────────────────────────────────────────
+LXC_CONF="/etc/pve/lxc/${CTID}.conf"
+if ! grep -q "lxc.apparmor.profile: unconfined" "$LXC_CONF" 2>/dev/null; then
+    echo ""
+    echo "[2b] Applying AppArmor unconfined profile for Docker support..."
+    echo "lxc.apparmor.profile: unconfined" >> "$LXC_CONF"
+    pct reboot $CTID
+    echo "  Rebooting container..."
+    sleep 10
+else
+    echo ""
+    echo "[2b] AppArmor profile already set, skipping."
+fi
+
+# ─────────────────────────────────────────────────
 # Step 3: Install essentials + Docker inside LXC
 # ─────────────────────────────────────────────────
 echo ""
@@ -154,8 +170,6 @@ pct exec $CTID -- bash -c '
 
     mkdir -p /opt/open-webui
     cat > /opt/open-webui/docker-compose.yml << YAML
-version: "3.8"
-
 services:
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -198,13 +212,19 @@ EOF
 # ─────────────────────────────────────────────────
 echo ""
 echo "[7/7] Smoke test — hitting Ollama directly..."
+echo "  (First inference loads the model into RAM — this may take 30-60s on CPU...)"
 pct exec $CTID -- bash -c '
-    RESPONSE=$(curl -s http://localhost:11434/api/generate \
+    RESPONSE=$(curl -s --max-time 120 http://localhost:11434/api/generate \
         -d "{\"model\":\"qwen2.5-coder:7b\",\"prompt\":\"Say hello in one sentence.\",\"stream\":false}")
-    REPLY=$(echo "$RESPONSE" | jq -r ".response" 2>/dev/null | head -3)
-    TOK=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d[\"eval_count\"] / (d[\"eval_duration\"]/1e9):.1f} tok/s\")" 2>/dev/null || echo "N/A")
-    echo "  Model says: $REPLY"
-    echo "  Speed: $TOK"
+    if [ -z "$RESPONSE" ]; then
+        echo "  Smoke test timed out (model may still be loading). Try manually:"
+        echo "    pct exec 200 -- curl -s http://localhost:11434/api/generate -d '"'"'{\"model\":\"qwen2.5-coder:7b\",\"prompt\":\"hello\",\"stream\":false}'"'"'"
+    else
+        REPLY=$(echo "$RESPONSE" | jq -r ".response" 2>/dev/null | head -3)
+        TOK=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d[\"eval_count\"] / (d[\"eval_duration\"]/1e9):.1f} tok/s\")" 2>/dev/null || echo "N/A")
+        echo "  Model says: $REPLY"
+        echo "  Speed: $TOK"
+    fi
 '
 
 # ─────────────────────────────────────────────────
