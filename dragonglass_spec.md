@@ -738,14 +738,16 @@ These are not required. The spec above is the complete, zero-cost solution.
 
 GPU options (pick based on budget and Phase 5 learnings):
 
-| Card | VRAM | Bus | 14B tok/s | 32B Q4 tok/s | Street Price | Notes |
-|------|------|-----|-----------|--------------|--------------|-------|
-| Tesla V100-PCIE-32GB | 32GB HBM2 | PCIe | 40-60 | 15-25 | $300-500 | Passive, server-native, cheapest path to 32GB |
-| RTX 3090 | 24GB GDDR6X | PCIe | 50-80 | 10-15 (tight) | $600-800 | Active cooling, needs airflow planning in R730 |
-| RTX 4090 | 24GB GDDR6X | PCIe | 80-120 | 15-25 (tight) | $1200-1500 | Fastest single-GPU option, 450W TDP, may need PSU upgrade |
-| RTX A6000 | 48GB GDDR6 | PCIe | 50-70 | 25-35 | $1500-2500 | 48GB fits 70B Q4, passive, built for servers |
+| Card | VRAM | Bus | 14B tok/s | 32B Q4 tok/s | Used Price (May 2026) | Notes |
+|------|------|-----|-----------|--------------|----------------------|-------|
+| Tesla V100-PCIE-32GB | 32GB HBM2 | PCIe | 40-60 | 15-25 | ~$700 | Passive, server-native, best VRAM/$ for 32B models |
+| RTX 3090 | 24GB GDDR6X | PCIe | 50-80 | 10-15 (tight) | ~$700-800 | Active cooling, needs airflow planning in R730, best compute/$ |
+| RTX 4090 | 24GB GDDR6X | PCIe | 80-120 | 15-25 (tight) | ~$1500-2000 | Fastest single-GPU option, 450W TDP, may need PSU upgrade |
+| ~~RTX A6000~~ | ~~48GB GDDR6~~ | ~~PCIe~~ | ~~50-70~~ | ~~25-35~~ | ~~$4,700+~~ | ~~Priced out by AI demand — was $1,500 in 2024~~ |
 
-*32B Q4 is ~18-20GB — fits comfortably in 32GB+ cards, tight on 24GB (leaves no room for context). 24GB cards top out at 14B comfortably or 32B with aggressive quantization.*
+*Prices as of May 2026 (eBay used market). AI demand has inflated GPU prices across the board.*
+
+*32B Q4 is ~18-20GB — fits comfortably in 32GB+ cards, tight on 24GB (leaves no room for context). 24GB cards top out at 14B comfortably or 32B with aggressive quantization. For the agentic coding goal, the V100's 32GB is the sweet spot: it fits 32B models with room for KV cache, at the same price as a 3090 that can't.*
 
 Hardware install:
 - [ ] Select and acquire GPU based on budget/performance target
