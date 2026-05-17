@@ -636,14 +636,14 @@ These are not required. The spec above is the complete, zero-cost solution.
 
 **Phase 0 — Setup + Baseline**
 - [ ] Order 2x E5-2699 v4 (SR2JS) + thermal paste
-- [ ] Run `operations/proxmox/inventory.sh` on cluster — confirm host/VM mapping
-- [ ] Create LXC container `dragonglass` (ID 200) on labradorite
-- [ ] Install Docker in the LXC
-- [ ] Install Ollama, bind to 0.0.0.0
-- [ ] Pull qwen2.5-coder:14b, deepseek-r1:14b, qwen2.5-coder:7b
-- [ ] Deploy Open WebUI via docker-compose
-- [ ] Access from Windows browser at http://dragonglass:3000, create admin account
-- [ ] Test local model chat through Open WebUI
+- [x] Run `operations/proxmox/inventory.sh` on cluster — confirm host/VM mapping
+- [x] Create LXC container `dragonglass` (ID 200) on labradorite
+- [x] Install Docker in the LXC
+- [x] Install Ollama, bind to 0.0.0.0
+- [x] Pull qwen2.5-coder:14b, deepseek-r1:14b, qwen2.5-coder:7b
+- [x] Deploy Open WebUI via docker-compose
+- [x] Access from Windows browser at http://dragonglass.local:3000, create admin account
+- [x] Test local model chat through Open WebUI
 - [ ] Copy benchmark.sh to both nodes + inside dragonglass
 - [ ] **Benchmark A — VMs running (normal daily state):**
   - [ ] `benchmark.sh --host labradorite-vms-on` on labradorite
@@ -686,3 +686,11 @@ These are not required. The spec above is the complete, zero-cost solution.
 - [ ] Design backup strategy for dragonglass (Open WebUI data, custom modelfiles, workflows)
 - [ ] Implement and test backup schedule
 - [ ] Verify restore process
+
+**Phase 5 — GPU Offload (stretch goal)**
+- [ ] Install Ollama on Windows PC (RTX 2080 Ti, 11GB VRAM)
+- [ ] Bind to network: `OLLAMA_HOST=0.0.0.0:11434`
+- [ ] Pull models (7B fits fully in VRAM, 14B mostly fits)
+- [ ] Add PC as second Ollama backend in Open WebUI admin settings
+- [ ] Test GPU inference speed vs CPU baseline
+- [ ] Dual-backend workflow: GPU when PC is on, CPU fallback when off
