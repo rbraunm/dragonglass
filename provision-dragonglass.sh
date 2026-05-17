@@ -86,9 +86,14 @@ fi
 echo ""
 echo "[3/7] Installing base packages and Docker..."
 pct exec $CTID -- bash -c '
+    # Fix locale warnings before anything else
+    sed -i "s/^# *en_US.UTF-8/en_US.UTF-8/" /etc/locale.gen
+    locale-gen en_US.UTF-8
+    export LANG=en_US.UTF-8
+
     apt-get update -qq
     apt-get upgrade -y -qq
-    apt-get install -y -qq curl wget git sudo ca-certificates gnupg lsb-release gcc numactl python3 jq
+    apt-get install -y -qq curl wget git sudo ca-certificates gnupg lsb-release gcc numactl python3 jq zstd
     curl -fsSL https://get.docker.com | sh
     systemctl enable docker
     systemctl start docker
