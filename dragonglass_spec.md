@@ -128,27 +128,64 @@ Green slots (9-12) stay empty for 2 DPC. Larger DIMMs go in white slots.
 | Ch2 | A3✓ A7✓ A11✓ | 3 | B3✓ B7✓ B11✓ | 3 |
 | Ch3 | A4✓ A8✓ A12✓ | 3 | B4✓ B8✓ B12✓ | 3 |
 
-**Optimized labradorite config (AFTER — 4x 32GB + 12x 16GB = 320GB @ 2400):**
+**Labradorite AFTER — 4x 32GB + 12x 16GB = 320GB @ 2400 MT/s, 2 DPC:**
 
-| Slot | Size | Slot | Size |
-|------|------|------|------|
-| A1 (white) | **32GB** | B1 (white) | **32GB** |
-| A2 (white) | **32GB** | B2 (white) | **32GB** |
-| A3 (white) | 16GB | B3 (white) | 16GB |
-| A4 (white) | 16GB | B4 (white) | 16GB |
-| A5 (black) | 16GB | B5 (black) | 16GB |
-| A6 (black) | 16GB | B6 (black) | 16GB |
-| A7 (black) | 16GB | B7 (black) | 16GB |
-| A8 (black) | 16GB | B8 (black) | 16GB |
-| A9 (green) | — | B9 (green) | — |
-| A10 (green) | — | B10 (green) | — |
-| A11 (green) | — | B11 (green) | — |
-| A12 (green) | — | B12 (green) | — |
+| Slot | Size | Notes |
+|------|------|-------|
+| A1 (white) | **32GB** | CPU1 Ch0, slot 1 |
+| A2 (white) | **32GB** | CPU1 Ch1, slot 1 |
+| A3 (white) | 16GB | CPU1 Ch2, slot 1 |
+| A4 (white) | 16GB | CPU1 Ch3, slot 1 |
+| A5 (black) | 16GB | CPU1 Ch0, slot 2 |
+| A6 (black) | 16GB | CPU1 Ch1, slot 2 |
+| A7 (black) | 16GB | CPU1 Ch2, slot 2 |
+| A8 (black) | 16GB | CPU1 Ch3, slot 2 |
+| A9 (green) | — | CPU1 Ch0, slot 3 — **empty for 2 DPC** |
+| A10 (green) | — | CPU1 Ch1, slot 3 — **empty for 2 DPC** |
+| A11 (green) | — | CPU1 Ch2, slot 3 — **empty for 2 DPC** |
+| A12 (green) | — | CPU1 Ch3, slot 3 — **empty for 2 DPC** |
+| B1 (white) | **32GB** | CPU2 Ch0, slot 1 |
+| B2 (white) | **32GB** | CPU2 Ch1, slot 1 |
+| B3 (white) | 16GB | CPU2 Ch2, slot 1 |
+| B4 (white) | 16GB | CPU2 Ch3, slot 1 |
+| B5 (black) | 16GB | CPU2 Ch0, slot 2 |
+| B6 (black) | 16GB | CPU2 Ch1, slot 2 |
+| B7 (black) | 16GB | CPU2 Ch2, slot 2 |
+| B8 (black) | 16GB | CPU2 Ch3, slot 2 |
+| B9 (green) | — | CPU2 Ch0, slot 3 — **empty for 2 DPC** |
+| B10 (green) | — | CPU2 Ch1, slot 3 — **empty for 2 DPC** |
+| B11 (green) | — | CPU2 Ch2, slot 3 — **empty for 2 DPC** |
+| B12 (green) | — | CPU2 Ch3, slot 3 — **empty for 2 DPC** |
 
-**Larvikite gets the freed 16GB sticks** — populate per R530 channel
-guidelines. Current 128GB stays the same or increases slightly.
+**Larvikite gets the freed 16GB sticks** — 8 of 9 sticks used, 9th is a spare.
+Same 128GB capacity, same 2133 MT/s (E5-2690 v3 max), but all 8 channels
+active instead of 4 — roughly doubles memory parallelism.
 
-**Effective bandwidth improvement:**
+**R530 Channel Mapping:**
+
+| | Channel 0 | Channel 1 | Channel 2 | Channel 3 |
+|--|-----------|-----------|-----------|-----------|
+| CPU1 | A1, A5 | A2, A6 | A3, A7 | A4, A8 |
+| CPU2 | B1 | B2 | B3 | B4 |
+
+**Larvikite AFTER — 8x 16GB = 128GB @ 2133 MT/s, 1 DPC:**
+
+| Slot | Size | Notes |
+|------|------|-------|
+| A1 (white) | 16GB | CPU1 Ch0 |
+| A2 (white) | 16GB | CPU1 Ch1 |
+| A3 (white) | 16GB | CPU1 Ch2 |
+| A4 (white) | 16GB | CPU1 Ch3 |
+| A5 (black) | — | |
+| A6 (black) | — | |
+| A7 (black) | — | |
+| A8 (black) | — | |
+| B1 (white) | 16GB | CPU2 Ch0 |
+| B2 (white) | 16GB | CPU2 Ch1 |
+| B3 (white) | 16GB | CPU2 Ch2 |
+| B4 (white) | 16GB | CPU2 Ch3 |
+
+**Effective bandwidth improvement (labradorite):**
 - Fixed dead channel on CPU1 (was 0 DPC, now 2 DPC)
 - All channels from 1866 → 2400 MT/s
 - Combined improvement: **~35-40% bandwidth gain**
@@ -636,14 +673,14 @@ These are not required. The spec above is the complete, zero-cost solution.
 
 **Phase 0 — Setup + Baseline**
 - [ ] Order 2x E5-2699 v4 (SR2JS) + thermal paste
-- [ ] Run `operations/proxmox/inventory.sh` on cluster — confirm host/VM mapping
-- [ ] Create LXC container `dragonglass` (ID 200) on labradorite
-- [ ] Install Docker in the LXC
-- [ ] Install Ollama, bind to 0.0.0.0
-- [ ] Pull qwen2.5-coder:14b, deepseek-r1:14b, qwen2.5-coder:7b
-- [ ] Deploy Open WebUI via docker-compose
-- [ ] Access from Windows browser at http://dragonglass:3000, create admin account
-- [ ] Test local model chat through Open WebUI
+- [x] Run `operations/proxmox/inventory.sh` on cluster — confirm host/VM mapping
+- [x] Create LXC container `dragonglass` (ID 200) on labradorite
+- [x] Install Docker in the LXC
+- [x] Install Ollama, bind to 0.0.0.0
+- [x] Pull qwen2.5-coder:14b, deepseek-r1:14b, qwen2.5-coder:7b
+- [x] Deploy Open WebUI via docker-compose
+- [x] Access from Windows browser at http://dragonglass.local:3000, create admin account
+- [x] Test local model chat through Open WebUI
 - [ ] Copy benchmark.sh to both nodes + inside dragonglass
 - [ ] **Benchmark A — VMs running (normal daily state):**
   - [ ] `benchmark.sh --host labradorite-vms-on` on labradorite
@@ -686,3 +723,50 @@ These are not required. The spec above is the complete, zero-cost solution.
 - [ ] Design backup strategy for dragonglass (Open WebUI data, custom modelfiles, workflows)
 - [ ] Implement and test backup schedule
 - [ ] Verify restore process
+
+**Phase 5 — GPU Offload (stretch goal)**
+- [ ] Install Ollama on Windows PC (RTX 2080 Ti, 11GB VRAM)
+- [ ] Bind to network: `OLLAMA_HOST=0.0.0.0:11434`
+- [ ] Pull models (7B fits fully in VRAM, 14B mostly fits)
+- [ ] Add PC as second Ollama backend in Open WebUI admin settings
+- [ ] Test GPU inference speed vs CPU baseline
+- [ ] Dual-backend workflow: GPU when PC is on, CPU fallback when off
+
+**Phase 6 — Dedicated Server GPU (if Phase 5 proves value)**
+
+*Goal: always-on GPU inference fast enough for agentic coding (tool use, inline edits, multi-step reasoning) — not just chat. Target model: 32B-class (e.g. Qwen2.5-Coder:32B) with reliable tool-call support.*
+
+GPU options (pick based on budget and Phase 5 learnings):
+
+| Card | VRAM | Bus | 14B tok/s | 32B Q4 tok/s | Used Price (May 2026) | Notes |
+|------|------|-----|-----------|--------------|----------------------|-------|
+| Tesla V100-PCIE-32GB | 32GB HBM2 | PCIe | 40-60 | 15-25 | ~$700 | Passive, server-native, best VRAM/$ for 32B models |
+| RTX 3090 | 24GB GDDR6X | PCIe | 50-80 | 10-15 (tight) | ~$700-800 | Active cooling, needs airflow planning in R730, best compute/$ |
+| RTX 4090 | 24GB GDDR6X | PCIe | 80-120 | 15-25 (tight) | ~$1500-2000 | Fastest single-GPU option, 450W TDP, may need PSU upgrade |
+| ~~RTX A6000~~ | ~~48GB GDDR6~~ | ~~PCIe~~ | ~~50-70~~ | ~~25-35~~ | ~~$4,700+~~ | ~~Priced out by AI demand — was $1,500 in 2024~~ |
+
+*Prices as of May 2026 (eBay used market). AI demand has inflated GPU prices across the board.*
+
+*32B Q4 is ~18-20GB — fits comfortably in 32GB+ cards, tight on 24GB (leaves no room for context). 24GB cards top out at 14B comfortably or 32B with aggressive quantization. For the agentic coding goal, the V100's 32GB is the sweet spot: it fits 32B models with room for KV cache, at the same price as a 3090 that can't.*
+
+Hardware install:
+- [ ] Select and acquire GPU based on budget/performance target
+- [ ] Install in labradorite R730 PCIe x16 slot (riser 3 confirmed, PCIe power confirmed)
+- [ ] Enable IOMMU in BIOS for GPU passthrough
+- [ ] Configure Proxmox PCI passthrough to dragonglass LXC
+- [ ] Install NVIDIA drivers + CUDA inside container
+- [ ] IPMI fan control script to override Dell thermal panic (non-Dell GPU = 100% fans)
+- [ ] Benchmark: tok/s on 14B and 32B models vs CPU baseline
+
+Agentic coding eval:
+- [ ] Install Aider in dragonglass (`pip install aider-chat`)
+- [ ] Configure Aider to use local Ollama backend
+- [ ] Pull Qwen2.5-Coder:32B (or best available 32B coder at the time)
+- [ ] Test suite: give Aider a small repo and run these tasks, score pass/fail
+  - [ ] "Add input validation to function X" — expects targeted inline edit, not full-file regen
+  - [ ] "Write tests for module Y" — expects new file creation
+  - [ ] "Find and fix the bug in Z" — expects read → diagnose → patch cycle
+  - [ ] "Refactor class A to use composition instead of inheritance" — multi-file coordinated edits
+- [ ] Compare tool-call success rate: 14B vs 32B vs 2080 Ti offload (Phase 5 baseline)
+- [ ] If 32B agentic eval passes >80% of tasks: retire 2080 Ti offload, server GPU is primary
+- [ ] If not: evaluate whether a larger model (70B Q4 on 48GB card) or a different agentic framework improves results

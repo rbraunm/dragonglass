@@ -1,0 +1,48 @@
+================================================================
+SYSTEM INFORMATION
+================================================================
+Hostname:  labradorite-after-8ch
+Date:      Sun May 17 11:23:34 AM MST 2026
+Kernel:    6.8.12-13-pve
+
+--- CPU ---
+Model name:                           Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Thread(s) per core:                   2
+Core(s) per socket:                   22
+Socket(s):                            2
+CPU max MHz:                          3600.0000
+CPU min MHz:                          1200.0000
+
+--- Memory ---
+               total        used        free      shared  buff/cache   available
+Mem:           314Gi        23Gi       290Gi        73Mi       2.7Gi       291Gi
+Swap:          2.0Gi          0B       2.0Gi
+
+Total DIMMs populated: 16
+Configured speed:      2400 MT/s
+Rated speed:           2400 MT/s
+
+================================================================
+MEMORY BANDWIDTH (STREAM)
+================================================================
+NOTE: Default OMP_NUM_THREADS=88 causes severe thread contention.
+See labradorite-stream-48threads.txt for accurate bandwidth numbers.
+
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:       15208.4     0.094770     0.084164     0.148475
+Scale:       7370.3     0.227162     0.173670     0.462512
+Add:         7992.5     0.296769     0.240226     0.520800
+Triad:       7940.4     0.273530     0.241800     0.396218
+
+================================================================
+MEMORY LATENCY (dd throughput proxy)
+================================================================
+Sequential read throughput (cached):
+10485760000 bytes (10 GB, 9.8 GiB) copied, 1.19223 s, 8.8 GB/s
+
+================================================================
+NUMA TOPOLOGY
+================================================================
+node0: MemTotal=164931796 kB (~157 GB)
+node1: MemTotal=165129156 kB (~157 GB)
+SYMMETRIC: Yes (157/157 GB)

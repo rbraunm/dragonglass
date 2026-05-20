@@ -19,7 +19,7 @@ set -euo pipefail
 
 CTID=200
 HOSTNAME="dragonglass"
-TEMPLATE="debian-12-standard_12.7-1_amd64.tar.zst"
+TEMPLATE="debian-12-standard_12.12-1_amd64.tar.zst"
 
 echo "============================================="
 echo "  Provisioning dragonglass (CT $CTID)"
@@ -81,14 +81,35 @@ else
 fi
 
 # ─────────────────────────────────────────────────
+# Step 2b: AppArmor — allow Docker to run in unprivileged LXC
+# ─────────────────────────────────────────────────
+LXC_CONF="/etc/pve/lxc/${CTID}.conf"
+if ! grep -q "lxc.apparmor.profile: unconfined" "$LXC_CONF" 2>/dev/null; then
+    echo ""
+    echo "[2b] Applying AppArmor unconfined profile for Docker support..."
+    echo "lxc.apparmor.profile: unconfined" >> "$LXC_CONF"
+    pct reboot $CTID
+    echo "  Rebooting container..."
+    sleep 10
+else
+    echo ""
+    echo "[2b] AppArmor profile already set, skipping."
+fi
+
+# ─────────────────────────────────────────────────
 # Step 3: Install essentials + Docker inside LXC
 # ─────────────────────────────────────────────────
 echo ""
 echo "[3/7] Installing base packages and Docker..."
 pct exec $CTID -- bash -c '
+    # Fix locale warnings before anything else
+    sed -i "s/^# *en_US.UTF-8/en_US.UTF-8/" /etc/locale.gen
+    locale-gen en_US.UTF-8
+    export LANG=en_US.UTF-8
+
     apt-get update -qq
     apt-get upgrade -y -qq
-    apt-get install -y -qq curl wget git sudo ca-certificates gnupg lsb-release gcc numactl python3 jq
+    apt-get install -y -qq curl wget git sudo ca-certificates gnupg lsb-release gcc numactl python3 jq zstd avahi-daemon
     curl -fsSL https://get.docker.com | sh
     systemctl enable docker
     systemctl start docker
@@ -149,8 +170,6 @@ pct exec $CTID -- bash -c '
 
     mkdir -p /opt/open-webui
     cat > /opt/open-webui/docker-compose.yml << YAML
-version: "3.8"
-
 services:
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -193,13 +212,28 @@ EOF
 # ─────────────────────────────────────────────────
 echo ""
 echo "[7/7] Smoke test — hitting Ollama directly..."
+echo "  Flushing page cache so Ollama sees available memory correctly..."
+echo 3 > /proc/sys/vm/drop_caches
+echo "  (First inference loads the model into RAM — polling until ready...)"
 pct exec $CTID -- bash -c '
-    RESPONSE=$(curl -s http://localhost:11434/api/generate \
-        -d "{\"model\":\"qwen2.5-coder:7b\",\"prompt\":\"Say hello in one sentence.\",\"stream\":false}")
-    REPLY=$(echo "$RESPONSE" | jq -r ".response" 2>/dev/null | head -3)
-    TOK=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d[\"eval_count\"] / (d[\"eval_duration\"]/1e9):.1f} tok/s\")" 2>/dev/null || echo "N/A")
-    echo "  Model says: $REPLY"
-    echo "  Speed: $TOK"
+    MAX_ATTEMPTS=12
+    for i in $(seq 1 $MAX_ATTEMPTS); do
+        RESPONSE=$(curl -s --max-time 120 http://localhost:11434/api/generate \
+            -d "{\"model\":\"qwen2.5-coder:7b\",\"prompt\":\"Say hello in one sentence.\",\"stream\":false}" 2>/dev/null)
+        DONE=$(echo "$RESPONSE" | jq -r ".done // empty" 2>/dev/null)
+        if [ "$DONE" = "true" ]; then
+            REPLY=$(echo "$RESPONSE" | jq -r ".response")
+            TOK=$(echo "$RESPONSE" | jq -r "if .eval_duration > 0 then \"\(.eval_count / (.eval_duration / 1e9) * 10 | round / 10) tok/s\" else \"N/A\" end" 2>/dev/null)
+            echo "  Model says: $REPLY"
+            echo "  Speed: $TOK"
+            exit 0
+        fi
+        echo "  Attempt $i/$MAX_ATTEMPTS — model loading..."
+        sleep 10
+    done
+    echo "  Smoke test failed after $MAX_ATTEMPTS attempts. Debug with:"
+    echo "    pct exec 200 -- systemctl status ollama"
+    echo "    pct exec 200 -- ollama list"
 '
 
 # ─────────────────────────────────────────────────
@@ -211,7 +245,7 @@ echo "  dragonglass provisioning complete!"
 echo "============================================="
 echo ""
 echo "  Next steps:"
-echo "  1. Open http://dragonglass:3000 in your browser"
+echo "  1. Open http://dragonglass.local:3000 in your browser"
 echo "     (or use the container IP — check with: pct exec $CTID -- hostname -I)"
 echo "  2. Create your admin account"
 echo "  3. Test a chat with qwen2.5-coder:14b"

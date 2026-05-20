@@ -1,0 +1,40 @@
+================================================================
+DRAGONGLASS LLM BENCHMARK - AFTER (8 channels, VMs off)
+================================================================
+Host:      labradorite (2x E5-2699 v4, 320GB DDR4-2400, 8ch)
+Container: dragonglass (CT 200, 64GB RAM, 8 vCPUs)
+Date:      Sun May 17 19:14:43 UTC 2026
+VMs:       Stopped (dedicated resources)
+
+================================================================
+LLM BENCHMARK SUMMARY
+================================================================
+--- Cold load times ---
+Model                            Load (s)
+qwen2.5-coder:7b                    13.34
+deepseek-r1:14b                     22.31
+qwen2.5-coder:14b                   22.63
+
+--- Generation speed (tok/s) by output length ---
+Model                         Short(50)   Med(200)  Long(500)    Overall
+qwen2.5-coder:7b                   5.33       5.84       5.68       5.62
+deepseek-r1:14b                    3.00       3.01       2.89       2.97
+qwen2.5-coder:14b                  3.06       3.00       2.98       3.01
+
+--- Generation speed variance ---
+Model                              Short σ         Med σ        Long σ
+qwen2.5-coder:7b                    ± 0.49        ± 0.24        ± 0.17
+deepseek-r1:14b                     ± 0.25        ± 0.07        ± 0.05
+qwen2.5-coder:14b                   ± 0.14        ± 0.02        ± 0.04
+
+--- Prompt processing speed (tok/s) by input length ---
+Model                           Short input      Med input     Long input
+qwen2.5-coder:7b                      33.22          20.95          20.99
+deepseek-r1:14b                        7.52           9.42           9.78
+qwen2.5-coder:14b                     17.35          11.88          10.50
+
+--- Overall summary ---
+Model                           Load(s) Gen tok/s (mean±σ)   Prompt tok/s
+qwen2.5-coder:7b                   13.3           5.6±0.4           25.1
+deepseek-r1:14b                    22.3           3.0±0.1            8.9
+qwen2.5-coder:14b                  22.6           3.0±0.1           13.2
