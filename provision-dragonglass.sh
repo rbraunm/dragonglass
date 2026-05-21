@@ -69,6 +69,7 @@ if ! pct status $CTID &>/dev/null; then
         --net0 name=eth0,bridge=vmbr0,ip=dhcp \
         --features nesting=1,keyctl=1 \
         --unprivileged 1 \
+        --tags "debian;ollama" \
         --start 1
 
     echo "  Container created and started."
