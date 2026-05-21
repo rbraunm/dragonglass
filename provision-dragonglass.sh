@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Provision dragonglass LXC on labradorite
+# Provision Dragonglass LXC on labradorite
 #
 # Run this ON the Proxmox host (labradorite) as root.
 # It creates the LXC container and installs Docker, Ollama, models,
@@ -11,18 +11,18 @@
 #   ./provision-dragonglass.sh
 #
 # After this completes:
-#   1. Access Open WebUI at http://dragonglass:3000 and create admin account
+#   1. Access Open WebUI at http://Dragonglass:3000 and create admin account
 #   2. Run benchmarks (see below)
 # =============================================================================
 
 set -euo pipefail
 
 CTID=200
-HOSTNAME="dragonglass"
+HOSTNAME="Dragonglass"
 TEMPLATE="debian-12-standard_12.12-1_amd64.tar.zst"
 
 echo "============================================="
-echo "  Provisioning dragonglass (CT $CTID)"
+echo "  Provisioning Dragonglass (CT $CTID)"
 echo "============================================="
 
 # ─────────────────────────────────────────────────
@@ -241,11 +241,11 @@ pct exec $CTID -- bash -c '
 # ─────────────────────────────────────────────────
 echo ""
 echo "============================================="
-echo "  dragonglass provisioning complete!"
+echo "  Dragonglass provisioning complete!"
 echo "============================================="
 echo ""
 echo "  Next steps:"
-echo "  1. Open http://dragonglass.local:3000 in your browser"
+echo "  1. Open http://Dragonglass.local:3000 in your browser"
 echo "     (or use the container IP — check with: pct exec $CTID -- hostname -I)"
 echo "  2. Create your admin account"
 echo "  3. Test a chat with qwen2.5-coder:14b"
@@ -258,7 +258,7 @@ echo "    # System-level on larvikite"
 echo "    scp benchmark.sh root@larvikite:/root/"
 echo "    ssh root@larvikite 'chmod +x /root/benchmark.sh && /root/benchmark.sh'"
 echo ""
-echo "    # LLM tok/s inside dragonglass"
+echo "    # LLM tok/s inside Dragonglass"
 echo "    # Copy benchmark.sh into the container first:"
 echo "    pct push $CTID benchmark.sh /root/benchmark.sh"
 echo "    pct exec $CTID -- chmod +x /root/benchmark.sh"
