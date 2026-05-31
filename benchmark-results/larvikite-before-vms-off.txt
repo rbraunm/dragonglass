@@ -1,0 +1,70 @@
+
+================================================================
+SYSTEM INFORMATION
+================================================================
+Hostname:  larvikite-before-vms-off
+Date:      Sun May 17 01:23:18 AM MST 2026
+Kernel:    6.8.12-4-pve
+
+--- CPU ---
+Model name:                           Intel(R) Xeon(R) CPU E5-2690 v3 @ 2.60GHz
+BIOS Model name:                      Intel(R) Xeon(R) CPU E5-2690 v3 @ 2.60GHz  CPU @ 2.6GHz
+Thread(s) per core:                   2
+Core(s) per socket:                   12
+Socket(s):                            2
+CPU max MHz:                          3500.0000
+CPU min MHz:                          1200.0000
+
+--- Memory ---
+               total        used        free      shared  buff/cache   available
+Mem:           125Gi       2.9Gi       122Gi        73Mi       993Mi       122Gi
+Swap:          2.0Gi          0B       2.0Gi
+
+Total DIMMs populated: 4
+Configured speed:      2133 MT/s
+Rated speed:           2400 MT/s
+
+================================================================
+MEMORY BANDWIDTH (STREAM)
+================================================================
+Running STREAM (this measures actual memory bandwidth)...
+
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:       20793.7     0.062205     0.061557     0.064394
+Scale:      11325.3     0.115002     0.113021     0.120148
+Add:        12391.4     0.156768     0.154946     0.168174
+Triad:      12321.1     0.157530     0.155831     0.169797
+
+================================================================
+MEMORY LATENCY (dd throughput proxy)
+================================================================
+Sequential read throughput (cached):
+10485760000 bytes (10 GB, 9.8 GiB) copied, 0.569427 s, 18.4 GB/s
+
+Sequential write to tmpfs:
+4294967296 bytes (4.3 GB, 4.0 GiB) copied, 32.2107 s, 133 MB/s
+
+================================================================
+CPU MULTI-CORE (kernel compile simulation)
+================================================================
+Compiling STREAM with all cores as a quick multi-core stress indicator...
+3x parallel compiles completed in: 212ms
+
+================================================================
+NUMA TOPOLOGY
+================================================================
+numactl not installed — install with: apt install numactl
+node0: CPUs=0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46  MemTotal=65848308 kB
+node1: CPUs=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47  MemTotal=66048304 kB
+
+================================================================
+BENCHMARK COMPLETE
+================================================================
+
+Results saved to: ./benchmark-results/larvikite-before-vms-off-20260517-012318.txt
+
+To compare before/after:
+  diff ./benchmark-results/larvikite-before-vms-off-BEFORE.txt ./benchmark-results/larvikite-before-vms-off-AFTER.txt
+
+Quick comparison on key metrics:
+  grep -E 'Triad:|Overall summary|Load\(s\)|tok/s' ./benchmark-results/larvikite-before-vms-off-*.txt
