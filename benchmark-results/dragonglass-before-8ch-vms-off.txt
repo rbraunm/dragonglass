@@ -1,0 +1,213 @@
+
+================================================================
+SYSTEM INFORMATION
+================================================================
+Hostname:  dragonglass-vms-off
+Date:      Sun May 17 08:21:50 AM UTC 2026
+Kernel:    6.8.12-13-pve
+
+--- CPU ---
+Model name:                           Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz
+Thread(s) per core:                   2
+Core(s) per socket:                   12
+Socket(s):                            2
+CPU max MHz:                          3300.0000
+CPU min MHz:                          1200.0000
+
+--- Memory ---
+               total        used        free      shared  buff/cache   available
+Mem:            64Gi       1.2Gi        62Gi       220Ki       402Mi        62Gi
+Swap:          2.0Gi          0B       2.0Gi
+
+Total DIMMs populated: 0
+N/A (need root)
+Configured speed:      N/A (need root)
+Rated speed:           N/A (need root)
+
+================================================================
+MEMORY BANDWIDTH (STREAM)
+================================================================
+Running STREAM (this measures actual memory bandwidth)...
+
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:       16095.4     0.084233     0.079526     0.086807
+Scale:       9669.1     0.142241     0.132380     0.153867
+Add:         9830.5     0.200678     0.195311     0.221788
+Triad:       9900.6     0.199910     0.193927     0.207522
+
+================================================================
+MEMORY LATENCY (dd throughput proxy)
+================================================================
+Sequential read throughput (cached):
+10485760000 bytes (10 GB, 9.8 GiB) copied, 1.24208 s, 8.4 GB/s
+
+Sequential write to tmpfs:
+4294967296 bytes (4.3 GB, 4.0 GiB) copied, 12.9814 s, 331 MB/s
+
+================================================================
+CPU MULTI-CORE (kernel compile simulation)
+================================================================
+Compiling STREAM with all cores as a quick multi-core stress indicator...
+3x parallel compiles completed in: 959ms
+
+================================================================
+NUMA TOPOLOGY
+================================================================
+available: 2 nodes (0-1)
+node 0 cpus: 0 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46
+node 0 size: 144944 MB
+node 0 free: 137978 MB
+node 1 cpus: 1 3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35 37 39 41 43 45 47
+node 1 size: 193524 MB
+node 1 free: 191223 MB
+node distances:
+node   0   1 
+  0:  10  21 
+  1:  21  10 
+
+================================================================
+OLLAMA LLM INFERENCE BENCHMARKS
+================================================================
+Models: qwen2.5-coder:7b
+deepseek-r1:14b
+qwen2.5-coder:14b
+
+NOTE: For cleanest cold-load numbers, run on the Proxmox host first:
+  echo 3 > /proc/sys/vm/drop_caches
+
+
+================================================================
+Model: qwen2.5-coder:7b
+================================================================
+
+--- Cold load test (model unloaded, first inference) ---
+    Run 1: 10 tok in 17.88s | gen=6.69 tok/s | prompt=10.07 tok/s | load=13.35s
+
+--- Short generation (num_predict=50) ---
+    Run 1: 50 tok in 15.91s | gen=3.56 tok/s | prompt=27.54 tok/s | load=0.23s
+    Run 2: 36 tok in 11.28s | gen=3.89 tok/s | prompt=23.68 tok/s | load=0.20s
+    Run 3: 50 tok in 15.79s | gen=3.56 tok/s | prompt=28.74 tok/s | load=0.26s
+
+--- Medium generation (num_predict=200) ---
+    Run 1: 200 tok in 58.38s | gen=3.60 tok/s | prompt=25.95 tok/s | load=0.22s
+    Run 2: 200 tok in 57.78s | gen=3.65 tok/s | prompt=25.97 tok/s | load=0.21s
+    Run 3: 200 tok in 57.43s | gen=3.68 tok/s | prompt=22.59 tok/s | load=0.21s
+
+--- Long generation (num_predict=500) ---
+    Run 1: 500 tok in 149.34s | gen=3.46 tok/s | prompt=23.18 tok/s | load=0.22s
+    Run 2: 500 tok in 150.40s | gen=3.44 tok/s | prompt=22.04 tok/s | load=0.23s
+    Run 3: 500 tok in 151.32s | gen=3.42 tok/s | prompt=21.44 tok/s | load=0.32s
+
+--- Prompt processing (varying input length, num_predict=50) ---
+    Run 1: 50 tok in 15.93s | gen=3.51 tok/s | prompt=30.79 tok/s | load=0.25s
+    Run 1: 50 tok in 19.93s | gen=3.57 tok/s | prompt=20.23 tok/s | load=0.21s
+    Run 1: 50 tok in 29.37s | gen=3.81 tok/s | prompt=18.70 tok/s | load=0.24s
+
+Model unloaded.
+
+================================================================
+Model: deepseek-r1:14b
+================================================================
+
+--- Cold load test (model unloaded, first inference) ---
+    Run 1: 10 tok in 27.69s | gen=2.18 tok/s | prompt=2.96 tok/s | load=21.72s
+
+--- Short generation (num_predict=50) ---
+    Run 1: 50 tok in 21.61s | gen=2.60 tok/s | prompt=6.59 tok/s | load=0.24s
+    Run 2: 50 tok in 20.90s | gen=2.70 tok/s | prompt=6.94 tok/s | load=0.20s
+    Run 3: 50 tok in 21.65s | gen=2.54 tok/s | prompt=7.40 tok/s | load=0.28s
+
+--- Medium generation (num_predict=200) ---
+    Run 1: 200 tok in 94.51s | gen=2.21 tok/s | prompt=6.68 tok/s | load=0.23s
+    Run 2: 200 tok in 91.56s | gen=2.29 tok/s | prompt=8.08 tok/s | load=0.19s
+    Run 3: 200 tok in 97.96s | gen=2.13 tok/s | prompt=8.06 tok/s | load=0.21s
+
+--- Long generation (num_predict=500) ---
+    Run 1: 500 tok in 263.32s | gen=1.95 tok/s | prompt=8.58 tok/s | load=0.18s
+    Run 2: 500 tok in 250.96s | gen=2.05 tok/s | prompt=8.37 tok/s | load=0.23s
+    Run 3: 500 tok in 250.99s | gen=2.05 tok/s | prompt=7.82 tok/s | load=0.21s
+
+--- Prompt processing (varying input length, num_predict=50) ---
+    Run 1: 50 tok in 25.13s | gen=2.14 tok/s | prompt=8.63 tok/s | load=0.25s
+    Run 1: 50 tok in 36.17s | gen=1.93 tok/s | prompt=8.70 tok/s | load=0.25s
+    Run 1: 50 tok in 53.25s | gen=2.24 tok/s | prompt=8.82 tok/s | load=0.17s
+
+Model unloaded.
+
+================================================================
+Model: qwen2.5-coder:14b
+================================================================
+
+--- Cold load test (model unloaded, first inference) ---
+    Run 1: 10 tok in 31.36s | gen=2.78 tok/s | prompt=6.25 tok/s | load=22.90s
+
+--- Short generation (num_predict=50) ---
+    Run 1: 45 tok in 20.28s | gen=2.59 tok/s | prompt=15.34 tok/s | load=0.21s
+    Run 2: 50 tok in 20.67s | gen=2.79 tok/s | prompt=16.75 tok/s | load=0.17s
+    Run 3: 50 tok in 23.94s | gen=2.33 tok/s | prompt=17.99 tok/s | load=0.20s
+
+--- Medium generation (num_predict=200) ---
+    Run 1: 171 tok in 71.48s | gen=2.55 tok/s | prompt=12.96 tok/s | load=0.20s
+    Run 2: 200 tok in 83.20s | gen=2.54 tok/s | prompt=14.32 tok/s | load=0.21s
+    Run 3: 200 tok in 78.75s | gen=2.69 tok/s | prompt=14.10 tok/s | load=0.21s
+
+--- Long generation (num_predict=500) ---
+    Run 1: 500 tok in 209.29s | gen=2.48 tok/s | prompt=11.74 tok/s | load=0.22s
+    Run 2: 500 tok in 215.10s | gen=2.41 tok/s | prompt=12.03 tok/s | load=0.21s
+    Run 3: 500 tok in 213.87s | gen=2.42 tok/s | prompt=12.63 tok/s | load=0.22s
+
+--- Prompt processing (varying input length, num_predict=50) ---
+    Run 1: 50 tok in 20.29s | gen=2.86 tok/s | prompt=16.02 tok/s | load=0.22s
+    Run 1: 50 tok in 29.94s | gen=2.61 tok/s | prompt=10.77 tok/s | load=0.21s
+    Run 1: 50 tok in 49.45s | gen=2.75 tok/s | prompt=9.58 tok/s | load=0.20s
+
+Model unloaded.
+
+================================================================
+LLM BENCHMARK SUMMARY
+================================================================
+
+--- Cold load times ---
+Model                            Load (s)
+qwen2.5-coder:7b                    13.35
+deepseek-r1:14b                     21.72
+qwen2.5-coder:14b                   22.90
+
+--- Generation speed (tok/s) by output length ---
+Model                         Short(50)   Med(200)  Long(500)    Overall
+qwen2.5-coder:7b                   3.67       3.64       3.44       3.58
+deepseek-r1:14b                    2.61       2.21       2.02       2.28
+qwen2.5-coder:14b                  2.57       2.60       2.43       2.53
+
+--- Generation speed variance ---
+Model                              Short σ         Med σ        Long σ
+qwen2.5-coder:7b                    ± 0.19        ± 0.04        ± 0.02
+deepseek-r1:14b                     ± 0.08        ± 0.08        ± 0.06
+qwen2.5-coder:14b                   ± 0.23        ± 0.08        ± 0.04
+
+--- Prompt processing speed (tok/s) by input length ---
+Model                           Short input      Med input     Long input
+qwen2.5-coder:7b                      30.79          20.23          18.70
+deepseek-r1:14b                        8.63           8.70           8.82
+qwen2.5-coder:14b                     16.02          10.77           9.58
+
+--- Overall summary ---
+Model                           Load(s) Gen tok/s (mean±σ)   Prompt tok/s
+qwen2.5-coder:7b                   13.4           3.6±0.1           23.2
+deepseek-r1:14b                    21.7           2.3±0.3            8.7
+qwen2.5-coder:14b                  22.9           2.5±0.1           12.1
+
+Raw benchmark data: /tmp/bench-raw-RUoQRb.csv
+Copied to: ./benchmark-results/dragonglass-vms-off-20260517-082150-raw.csv
+
+================================================================
+BENCHMARK COMPLETE
+================================================================
+
+Results saved to: ./benchmark-results/dragonglass-vms-off-20260517-082150.txt
+
+To compare before/after:
+  diff ./benchmark-results/dragonglass-vms-off-BEFORE.txt ./benchmark-results/dragonglass-vms-off-AFTER.txt
+
+Quick comparison on key metrics:
+  grep -E 'Triad:|Overall summary|Load\(s\)|tok/s' ./benchmark-results/dragonglass-vms-off-*.txt

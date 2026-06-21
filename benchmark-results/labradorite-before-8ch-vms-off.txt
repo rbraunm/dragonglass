@@ -1,0 +1,70 @@
+
+================================================================
+SYSTEM INFORMATION
+================================================================
+Hostname:  labradorite-vms-off
+Date:      Sun May 17 01:20:31 AM MST 2026
+Kernel:    6.8.12-13-pve
+
+--- CPU ---
+Model name:                           Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz
+BIOS Model name:                      Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz  CPU @ 2.5GHz
+Thread(s) per core:                   2
+Core(s) per socket:                   12
+Socket(s):                            2
+CPU max MHz:                          3300.0000
+CPU min MHz:                          1200.0000
+
+--- Memory ---
+               total        used        free      shared  buff/cache   available
+Mem:           330Gi       6.1Gi       279Gi        77Mi        47Gi       324Gi
+Swap:          2.0Gi          0B       2.0Gi
+
+Total DIMMs populated: 21
+Configured speed:      1866 MT/s
+Rated speed:           2400 MT/s
+
+================================================================
+MEMORY BANDWIDTH (STREAM)
+================================================================
+Running STREAM (this measures actual memory bandwidth)...
+
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:       15636.7     0.085665     0.081859     0.087644
+Scale:       9405.9     0.142220     0.136085     0.160920
+Add:        10026.5     0.198333     0.191493     0.204640
+Triad:       9975.6     0.198784     0.192469     0.204107
+
+================================================================
+MEMORY LATENCY (dd throughput proxy)
+================================================================
+Sequential read throughput (cached):
+10485760000 bytes (10 GB, 9.8 GiB) copied, 1.14161 s, 9.2 GB/s
+
+Sequential write to tmpfs:
+4294967296 bytes (4.3 GB, 4.0 GiB) copied, 32.3139 s, 133 MB/s
+
+================================================================
+CPU MULTI-CORE (kernel compile simulation)
+================================================================
+Compiling STREAM with all cores as a quick multi-core stress indicator...
+3x parallel compiles completed in: 386ms
+
+================================================================
+NUMA TOPOLOGY
+================================================================
+numactl not installed — install with: apt install numactl
+node0: CPUs=0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46  MemTotal=148423616 kB
+node1: CPUs=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47  MemTotal=198168800 kB
+
+================================================================
+BENCHMARK COMPLETE
+================================================================
+
+Results saved to: ./benchmark-results/labradorite-vms-off-20260517-012031.txt
+
+To compare before/after:
+  diff ./benchmark-results/labradorite-vms-off-BEFORE.txt ./benchmark-results/labradorite-vms-off-AFTER.txt
+
+Quick comparison on key metrics:
+  grep -E 'Triad:|Overall summary|Load\(s\)|tok/s' ./benchmark-results/labradorite-vms-off-*.txt
